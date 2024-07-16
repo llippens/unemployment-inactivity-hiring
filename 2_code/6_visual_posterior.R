@@ -5,7 +5,7 @@ pacman::p_load(here,
                install = TRUE,
                update = FALSE)
 
-source(file.path(here(), "2_code", "3_bayesian.R"))
+source(file.path(here(), "2_code", "4_bayesian.R"))
 
 process_list <- function(list_name, list_data) {
   list_data$data %>%

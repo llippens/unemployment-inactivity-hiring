@@ -10,7 +10,7 @@ extrafont::loadfonts("all", quiet = TRUE)
 
 source(file.path(here(), "2_code", "2_metareg.R"))
 source(file.path(here(), "2_code", "2_metareg-ext.R"))
-source(file.path(here(), "2_code", "3_heterogeneity.R"))
+source(file.path(here(), "2_code", "4_heterogeneity.R"))
 
 blue <- "#1E64C8"
 

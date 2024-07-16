@@ -77,7 +77,7 @@ mreg.dur.nc <-
     test = "knha"
   )
 
-mreg.dur.nc.pred <- predict(mreg.dur.nc, transf = exp) %>% as_tibble()
+mreg.dur.nc.pred.gen <- predict(mreg.dur.nc, transf = exp) %>% as_tibble()
 
 mreg.dur.nc.emm <-
   emmprep(mreg.dur.nc) %>%
@@ -101,8 +101,10 @@ mreg <-
     test = "knha"
   )
 
-mreg.pred <-
-  predict(mreg, transf = exp) %>%
+mreg.pred.gen <-
+  predict(mreg %>%
+            robust(cluster = cluster, adjust = TRUE, clubSandwich = TRUE),
+          transf = exp) %>%
   as_tibble() %>%
   mutate(x = data$unemployment_duration_months)
 
@@ -128,6 +130,13 @@ mreg.emm <-
   emmeans(specs = "1",
           weights = "proportional")
 
+mreg.region.pred.gen <-
+  predict(mreg.region %>%
+            robust(cluster = cluster, adjust = TRUE, clubSandwich = TRUE),
+          transf = exp) %>%
+  as_tibble() %>%
+  mutate(x = data$unemployment_duration_months)
+
 
 
 mreg.ur <-
@@ -149,23 +158,12 @@ mreg.ur.emm <-
   emmeans(specs = "1",
           weights = "proportional")
 
-mreg.ur.pred <-
+mreg.ur.pred.gen <-
   predict(mreg.ur, transf = exp) %>%
   as_tibble() %>%
   mutate(x1 = data$unemployment_duration_months,
          x2 = data$unemployment_rate,
          author = data$authors)
-
-bubble <-
-  metareg(
-    ma,
-    ~ unemployment_rate,
-    method.tau = "REML",
-    hakn = TRUE,
-    level.ma = .95,
-    intercept = TRUE
-  ) %>%
-  bubble()
 
 
 

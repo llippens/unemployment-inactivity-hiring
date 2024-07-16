@@ -5,7 +5,7 @@ pacman::p_load(here,
                install = TRUE,
                update = FALSE)
 
-source(file.path(here(), "2_code", "4_pubbias.R"))
+source(file.path(here(), "2_code", "5_pubbias.R"))
 
 pcurve.plot.data <-
   pcurve.plot.data %>%
