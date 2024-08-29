@@ -3,7 +3,6 @@ pacman::p_load(here,
                ggplot2,
                colorspace,
                ggtext,
-               ggnewscale,
                install = TRUE,
                update = FALSE)
 
@@ -30,27 +29,6 @@ mreg.ur.pred <-
   mreg.ur.low.pred %>%
   rbind(mreg.ur.high.pred) %>%
   mutate(ur_cat = factor(ur_cat) %>% fct_rev())
-
-ribbon.lm <- list()
-ribbon.pred <- list()
-ribbon <- list()
-for(urc in levels(data.visual.udur$ur_cat)){
-  ribbon.lm[[urc]] <- lm(y_exp_alt ~ x1,
-                         data = data.visual.udur %>% filter(ur_cat == urc),
-                         weights = w)
-  ribbon.pred[[urc]] <- predict(ribbon.lm[[urc]], se = TRUE)
-  
-  ribbon[[urc]] <-
-    tibble(fit = ribbon.pred[[urc]]$fit,
-           ci_low = ribbon.pred[[urc]]$fit - qnorm(0.975) * ribbon.pred[[urc]]$se.fit,
-           ci_high = ribbon.pred[[urc]]$fit + qnorm(0.975) * ribbon.pred[[urc]]$se.fit,
-           x1 = data %>%
-             filter(unemployment_rate_categorical6 == urc) %>%
-             select(unemployment_duration_months) %>%
-             pull(),
-           ur_cat = urc)
-}
-ribbon <- do.call(rbind, ribbon)
 
 blue <- "#1E64C8"
 orange <- "#C78D1E"
@@ -88,19 +66,17 @@ data.visual.udur %>%
                     name = "Unemployment rate:",
                     guide = guide_legend(reverse = FALSE)) +
   guides(size = "none") +
-  #new_scale_colour() +
-  geom_smooth(mapping = aes(x = x1, y = y_exp_alt-1,
-                            weight = w, colour = ur_cat),
-              method = "lm",
-              formula = "y ~ x",
-              linetype = "longdash",
-              fill = NA,
-              linewidth = .5,
-              alpha = 0.2,
-              level = 0.95,
-              span = .85,
-              show.legend = FALSE) +
-  #scale_colour_manual(values = c(lorange, dorange)) +
+  #geom_smooth(mapping = aes(x = x1, y = y_exp_alt-1,
+                            #weight = w, colour = ur_cat),
+              #method = "lm",
+              #formula = "y ~ x",
+              #linetype = "longdash",
+              #fill = NA,
+              #linewidth = .5,
+              #alpha = 0.2,
+              #level = 0.95,
+              #span = .85,
+              #show.legend = FALSE) +
   scale_y_continuous(limits = c(-1, 1.245),
                      breaks = seq(-1, 1.25, .25),
                      labels = scales::label_percent(

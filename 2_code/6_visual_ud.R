@@ -29,21 +29,10 @@ data.visual.duration <-
         w_alt = data.visual.regplot$psize) %>%
   as_tibble()
 
-ribbon.loess <- loess(y_exp_alt ~ x, data = data.visual.duration,
-                      weights = w, span = .8)
-ribbon.pred <- predict(ribbon.loess, se = TRUE)
-
-ribbon <-
-  cbind(fit = ribbon.pred$fit,
-        ci_low = ribbon.pred$fit - qnorm(0.975) * ribbon.pred$se.fit,
-        ci_high = ribbon.pred$fit + qnorm(0.975) * ribbon.pred$se.fit,
-        x = data$unemployment_duration_months) %>%
-  as_tibble()
-
 xtitle <- "Unemployment duration<br>(in months)"
 ytitle <- "Difference in positive callbacks"
 
-# Points are original estimates based on underlying studies
+# Points are original estimates based on underlying studies, weighted by their meta-analytic weights
 # Smoothed, weighted LOESS curve is based on predicted values, fully controlled
 
 ggplot(
@@ -56,12 +45,6 @@ ggplot(
   geom_point(mapping = aes(size = w),
              colour = blue,
              alpha = .5) +
-  #geom_ribbon(data = ribbon,
-              #mapping = aes(y = fit-1,
-                            #ymin = ci_low-1, ymax = ci_high-1),
-              #fill = NA,
-              #colour = "grey20",
-              #linewidth = .1) +
   geom_ribbon(data = mreg.ud.pred,
               mapping = aes(x = ud, y = pred-1,
                             ymin = ci.lb-1, ymax = ci.ub-1),
@@ -78,16 +61,15 @@ ggplot(
             mapping = aes(x = ud, y = pred-1),
             colour = blue,
             linewidth = 1) +
-  geom_smooth(mapping = aes(y = y_exp_alt-1, weight = w),
-              colour = blue,
-              fill = NA, #"grey20",
-              method = "loess",
-              formula = "y ~ x",
-              linewidth = .5,
-              linetype = "longdash",
-              #alpha = 0.15,
-              span = .8,
-              level = 0.95) +
+  #geom_smooth(mapping = aes(y = y_exp_alt-1, weight = w),
+              #colour = blue,
+              #fill = NA, #"grey20",
+              #method = "loess",
+              #formula = "y ~ x",
+              #linewidth = .5,
+              #linetype = "longdash",
+              #span = .8,
+              #level = 0.95) +
   scale_y_continuous(limits = c(-1, 1.245),
                      breaks = seq(-1, 1.25, .25),
                      labels = scales::label_percent(
